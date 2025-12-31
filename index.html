@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oden Graphic Design</title>
+    <link rel="stylesheet" href="CSS/style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body>
+
+    <header>
+        <nav id="navbar">
+            <button class="hamburger md:hidden block" id="menuBtn">
+                <img src="Links/Risorsa 11.svg" alt="Logo" style="width: 32px;">
+            </button>
+
+            <ul class="menu" id="toggleMenu">
+                <li><a href="#hero">HOME</a></li>
+                <li><a href="portfolio.html">PORTFOLIO</a></li>
+                <li class="symbol hidden md:block"><img src="Links/Risorsa 11.svg" style="width: 25px;"></li>
+                <li><a href="#chisono">CHI SONO</a></li>
+                <li><a href="#contatti">CONTATTI</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+        <div id="loading" class="h-screen w-screen absolute bg-white z-20">
+            <div class="flex justify-center items-center h-full">
+                <img src="/Links/Risorsa 11.svg" style="width: 32px;" alt="">
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="container mx-auto z-1">
+                <div id="columns" class=""></div>
+            </div>
+        </div>
+
+        <script>
+            const loading = document.getElementById('loading');
+const columnsContainer = document.getElementById('columns');
+
+// 1. I tuoi lavori: ho aggiunto "original: true" dove serve
+const myProjects = [
+    { url: 'Links/Cantiere Icon.webp', title: 'Cantiere Creativo', link: 'progetto-1.html' },
+    { url: '/Links/ANTSY Icon.webp', title: 'Antsy Brand Identity', link: 'progetto-2.html' },
+    { url: '/Links/Fratelli Icon.webp', title: 'Fratelli Veggies', link: 'progetto-3.html' },
+    { url: '/Links/Bear Express Icon.webp', title: 'Bear Express', link: 'progetto-3.html' },
+    { url: '/Links/Kiss Pizza Icon.webp', title: 'Kiss Pizza', link: 'progetto-3.html' },
+    { url: '/Links/Pigra Icon.webp', title: 'Fotografia Pigra', link: 'progetto-3.html' },
+    { url: '/Links/Zucca Icon.webp', title: 'Festa della Zucca di Melara', link: 'progetto-3.html' },
+    { url: '/Links/Manifesto 1.webp', title: 'Manifesto Studio', link: 'progetto-3.html', original: true },
+    { url: '/Links/Gayle render.mp4', title: 'Gayle Render', link: 'progetto-3.html', original: true },
+];
+
+const proportions = [1, 1.5, 0.75, 1.33, 0.8]; 
+let allProjects = [];
+
+const prepareProjects = () => {
+    myProjects.forEach(proj => {
+        allProjects.push({
+            ...proj,
+            // Assegna ratio random solo se NON è "original"
+            ratio: proj.original ? null : proportions[Math.floor(Math.random() * proportions.length)]
+        });
+    });
+    // Mischia l'array
+    allProjects.sort(() => Math.random() - 0.5);
+}
+
+const setup = () => {
+    const count = Math.ceil(window.innerWidth / 360);
+    columnsContainer.innerHTML = '';
+    for(let i = 0; i < count; i++) {
+        const col = document.createElement('div');
+        col.className = "flex flex-col gap-4";
+        columnsContainer.appendChild(col);
+    }
+    renderGrid();
+    columnsContainer.className = `grid grid-cols-${count} gap-4 px-4 md:px-10`;
+    loading.style.display = 'none';
+}
+
+const renderGrid = () => {
+    allProjects.forEach((project, i) => {
+        const isVideo = project.url.toLowerCase().endsWith('.mp4');
+        const card = document.createElement('a');
+        card.href = project.link;
+        
+        // Se è "original", non forziamo l'aspect-ratio (si adatta al contenuto)
+        if (!project.original) {
+            card.style.aspectRatio = project.ratio;
+        }
+
+        card.className = "group relative block w-full overflow-hidden rounded-2xl transition-transform duration-500 hover:scale-105 z-10 bg-[#1a1a1a] shadow-xl";
+
+        let media;
+        if (isVideo) {
+            media = document.createElement('video');
+            media.src = project.url;
+            media.autoplay = true;
+            media.loop = true;
+            media.muted = true;
+            media.setAttribute('playsinline', ''); 
+        } else {
+            media = document.createElement('img');
+            media.src = project.url;
+        }
+        
+        // Se è "original", usiamo h-auto per non tagliare l'immagine/video
+        // Se NON è "original", usiamo h-full + object-cover per riempire la card randomica
+        if (project.original) {
+            media.className = "w-full h-auto block transition-transform duration-700 group-hover:scale-110";
+        } else {
+            media.className = "w-full h-full object-cover block transition-transform duration-700 group-hover:scale-110";
+        }
+
+        const overlay = document.createElement('div');
+        overlay.className = "absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center p-6 text-center";
+        overlay.innerHTML = `<h3 class="text-white font-bold text-lg uppercase tracking-widest translate-y-4 group-hover:translate-y-0 transition-transform duration-500 font-[gothambold]">${project.title}</h3>`;
+
+        card.appendChild(media);
+        card.appendChild(overlay);
+        const col = columnsContainer.children[i % columnsContainer.children.length];
+        col.appendChild(card);
+    });
+}
+
+prepareProjects();
+setup();
+
+let timeout;
+window.addEventListener('resize', () => {
+    loading.style.display = 'block';
+    clearTimeout(timeout);
+    timeout = setTimeout(() => setup(), 300);
+});
+        </script> 
+
+
+
+
+    <script> 
+        // Gestione Menu Mobile
+        const menuBtn = document.getElementById("menuBtn");
+        const menu = document.getElementById("toggleMenu");
+        const nav = document.getElementById("navbar");
+        const animDuration = 0.2; 
+        
+        menuBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            menu.classList.toggle("active");
+            
+        });
+
+    </script>
+</body>
+</html>
