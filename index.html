@@ -17,11 +17,11 @@
             </button>
 
             <ul class="menu" id="toggleMenu">
-                <li><a href="#hero">HOME</a></li>
+                <li><a href="index.html">HOME</a></li>
                 <li><a href="portfolio.html">PORTFOLIO</a></li>
                 <li class="symbol hidden md:block"><img src="Links/Risorsa 11.svg" style="width: 25px;"></li>
-                <li><a href="#chisono">CHI SONO</a></li>
-                <li><a href="#contatti">CONTATTI</a></li>
+                <li><a href="chisono.html">CHI SONO</a></li>
+                <li><a href="contatti.html">CONTATTI</a></li>
             </ul>
         </nav>
     </header>
@@ -39,10 +39,10 @@
         </div>
 
         <script>
-            const loading = document.getElementById('loading');
+           const loading = document.getElementById('loading');
 const columnsContainer = document.getElementById('columns');
 
-// 1. I tuoi lavori: ho aggiunto "original: true" dove serve
+// 1. I tuoi lavori
 const myProjects = [
     { url: 'Links/Cantiere Icon.webp', title: 'Cantiere Creativo', link: 'progetto-1.html' },
     { url: '/Links/ANTSY Icon.webp', title: 'Antsy Brand Identity', link: 'progetto-2.html' },
@@ -53,49 +53,47 @@ const myProjects = [
     { url: '/Links/Zucca Icon.webp', title: 'Festa della Zucca di Melara', link: 'progetto-3.html' },
     { url: '/Links/Manifesto 1.webp', title: 'Manifesto Studio', link: 'progetto-3.html', original: true },
     { url: '/Links/Gayle render.mp4', title: 'Gayle Render', link: 'progetto-3.html', original: true },
+    { url: '/Links/Progetto Pesce V1.mp4', title: 'Animazione Pesce', link: 'progetto-3.html', original: true },
+    { url: '/Links/Esercizio 3D.mp4', title: 'Ghiaccio', link: 'progetto-3.html', original: true },
+    { url: '/Links/Simonini.jpg', title: 'Amministrazioni Simonini', link: 'progetto-3.html'},
+    { url: '/Links/Ghibli.png', title: 'Profumi Studio Ghibli', link: 'progetto-3.html'},
+    { url: '/Links/Arborum.jpg', title: 'Arborum Branding', link: 'progetto-3.html'},
 ];
 
 const proportions = [1, 1.5, 0.75, 1.33, 0.8]; 
-let allProjects = [];
-
-const prepareProjects = () => {
-    myProjects.forEach(proj => {
-        allProjects.push({
-            ...proj,
-            // Assegna ratio random solo se NON è "original"
-            ratio: proj.original ? null : proportions[Math.floor(Math.random() * proportions.length)]
-        });
-    });
-    // Mischia l'array
-    allProjects.sort(() => Math.random() - 0.5);
-}
 
 const setup = () => {
-    const count = Math.ceil(window.innerWidth / 360);
+    // Svuotiamo il contenitore
     columnsContainer.innerHTML = '';
-    for(let i = 0; i < count; i++) {
+    
+    // Mischiamo i progetti
+    myProjects.sort(() => Math.random() - 0.5);
+
+    // Calcoliamo quante colonne servono
+    const count = Math.ceil(window.innerWidth / 360);
+
+    // Creiamo i contenitori delle colonne (div)
+    for (let i = 0; i < count; i++) {
         const col = document.createElement('div');
         col.className = "flex flex-col gap-4";
         columnsContainer.appendChild(col);
     }
-    renderGrid();
-    columnsContainer.className = `grid grid-cols-${count} gap-4 px-4 md:px-10`;
-    loading.style.display = 'none';
-}
 
-const renderGrid = () => {
-    allProjects.forEach((project, i) => {
+    // Per ogni progetto creiamo la card
+    myProjects.forEach((project, i) => {
         const isVideo = project.url.toLowerCase().endsWith('.mp4');
         const card = document.createElement('a');
         card.href = project.link;
         
-        // Se è "original", non forziamo l'aspect-ratio (si adatta al contenuto)
+        // Se NON è "original", assegniamo una proporzione random dall'elenco
         if (!project.original) {
-            card.style.aspectRatio = project.ratio;
+            const ratioCasuale = proportions[Math.floor(Math.random() * proportions.length)];
+            card.style.aspectRatio = ratioCasuale;
         }
 
         card.className = "group relative block w-full overflow-hidden rounded-2xl transition-transform duration-500 hover:scale-105 z-10 bg-[#1a1a1a] shadow-xl";
 
+        // Creiamo il Media (Video o Immagine)
         let media;
         if (isVideo) {
             media = document.createElement('video');
@@ -109,28 +107,35 @@ const renderGrid = () => {
             media.src = project.url;
         }
         
-        // Se è "original", usiamo h-auto per non tagliare l'immagine/video
-        // Se NON è "original", usiamo h-full + object-cover per riempire la card randomica
+        // Applichiamo le classi per lo stile (originale vs riempimento)
         if (project.original) {
             media.className = "w-full h-auto block transition-transform duration-700 group-hover:scale-110";
         } else {
             media.className = "w-full h-full object-cover block transition-transform duration-700 group-hover:scale-110";
         }
 
+        // Overlay testo
         const overlay = document.createElement('div');
         overlay.className = "absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center p-6 text-center";
         overlay.innerHTML = `<h3 class="text-white font-bold text-lg uppercase tracking-widest translate-y-4 group-hover:translate-y-0 transition-transform duration-500 font-[gothambold]">${project.title}</h3>`;
 
         card.appendChild(media);
         card.appendChild(overlay);
-        const col = columnsContainer.children[i % columnsContainer.children.length];
-        col.appendChild(card);
-    });
-}
 
-prepareProjects();
+        // Mettiamo la card nella colonna giusta usando il resto della divisione %
+        const colonnaTarget = columnsContainer.children[i % count];
+        colonnaTarget.appendChild(card);
+    });
+
+    // Impostiamo la griglia CSS del contenitore
+    columnsContainer.className = `grid grid-cols-${count} gap-4 px-4 md:px-10`;
+    loading.style.display = 'none';
+};
+
+// Avviamo tutto
 setup();
 
+// Gestione ridimensionamento finestra
 let timeout;
 window.addEventListener('resize', () => {
     loading.style.display = 'block';
