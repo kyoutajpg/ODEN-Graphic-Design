@@ -39,10 +39,10 @@
         </div>
 
         <script>
-           const loading = document.getElementById('loading');
+      const loading = document.getElementById('loading');
 const columnsContainer = document.getElementById('columns');
 
-// 1. I tuoi lavori
+// 1. DATABASE PROGETTI (Lavori + Card Speciali)
 const myProjects = [
     { url: 'Links/Cantiere Icon.webp', title: 'Cantiere Creativo', link: 'progetto-1.html' },
     { url: '/Links/ANTSY Icon.webp', title: 'Antsy Brand Identity', link: 'progetto-2.html' },
@@ -55,111 +55,126 @@ const myProjects = [
     { url: '/Links/Gayle render.mp4', title: 'Gayle Render', link: 'progetto-3.html', original: true },
     { url: '/Links/Progetto Pesce V1.mp4', title: 'Animazione Pesce', link: 'progetto-3.html', original: true },
     { url: '/Links/Esercizio 3D.mp4', title: 'Ghiaccio', link: 'progetto-3.html', original: true },
-    { url: '/Links/Simonini.jpg', title: 'Amministrazioni Simonini', link: 'progetto-3.html'},
-    { url: '/Links/Ghibli.png', title: 'Profumi Studio Ghibli', link: 'progetto-3.html'},
-    { url: '/Links/Arborum.jpg', title: 'Arborum Branding', link: 'progetto-3.html'},
+    { url: '/Links/Simonini.jpg', title: 'Amministrazioni Simonini', link: 'progetto-3.html' },
+    { url: '/Links/Ghibli.png', title: 'Profumi Studio Ghibli', link: 'progetto-3.html' },
+    { url: '/Links/Arborum.jpg', title: 'Arborum Branding', link: 'progetto-3.html' },
+    
+    // CARD SPECIALI (Si mescolano ai lavori)
+    { 
+        type: 'special', 
+        title: 'CHI SONO', 
+        content: 'Sono uno studente di design appassionato di comunicazione visiva. Mi piace sperimentare con il 3D e l’animazione per creare esperienze digitali uniche.', 
+        bgColor: '#382985' 
+    },
+    { 
+        type: 'special', 
+        title: 'CONTATTI', 
+        content: 'Lavoriamo insieme! Puoi scrivermi via mail a: info@tuonome.it o cercarmi sui social come @tuousername.', 
+        bgColor: '#E61F57' 
+    }
 ];
 
-const proportions = [1, 1.5, 0.75, 1.33, 0.8]; 
+const proportions = [1, 1.5, 0.75, 1.33, 0.8];
 
-const setup = () => {
-    // Svuotiamo il contenitore
-    columnsContainer.innerHTML = '';
+// 2. FUNZIONE PER APRIRE IL POP-UP (MODAL)
+const aprireModal = (titolo, contenuto) => {
+    const modal = document.createElement('div');
+    modal.className = "fixed inset-0 z-[100] bg-black/80 backdrop-blur-md flex items-center justify-center p-4";
+    modal.style.animation = "fadeIn 0.3s ease-out";
     
-    // Mischiamo i progetti
-    myProjects.sort(() => Math.random() - 0.5);
+    modal.innerHTML = `
+        <div class="bg-[#1a1a1a] p-10 rounded-3xl max-w-lg w-full border border-white/10 shadow-2xl relative">
+            <button class="absolute top-5 right-5 text-white/50 hover:text-white text-2xl" id="closeModal">✕</button>
+            <h2 class="text-3xl font-bold text-white mb-4 uppercase tracking-tighter font-[gothambold]">${titolo}</h2>
+            <p class="text-white/70 leading-relaxed">${contenuto}</p>
+        </div>
+    `;
 
-    // Calcoliamo quante colonne servono
+    document.body.appendChild(modal);
+
+    // Funzione per chiudere
+    const chiudi = () => modal.remove();
+    modal.querySelector('#closeModal').onclick = chiudi;
+    modal.querySelector('#closeBtn').onclick = chiudi;
+    modal.onclick = (e) => { if(e.target === modal) chiudi(); };
+};
+
+// 3. FUNZIONE PRINCIPALE (SETUP)
+const setup = () => {
+    columnsContainer.innerHTML = '';
+    myProjects.sort(() => Math.random() - 0.5); // Mischia l'array
+    
     const count = Math.ceil(window.innerWidth / 360);
 
-    // Creiamo i contenitori delle colonne (div)
+    // Crea le colonne
     for (let i = 0; i < count; i++) {
         const col = document.createElement('div');
         col.className = "flex flex-col gap-4";
         columnsContainer.appendChild(col);
     }
 
-    // Per ogni progetto creiamo la card
     myProjects.forEach((project, i) => {
-        const isVideo = project.url.toLowerCase().endsWith('.mp4');
-        const card = document.createElement('a');
-        card.href = project.link;
+        const card = document.createElement('div');
+        card.className = "group relative block w-full overflow-hidden rounded-2xl transition-all duration-500 hover:scale-105 z-10 bg-[#1a1a1a] shadow-xl mb-4 cursor-pointer";
+
+        // LOGICA CARD SPECIALE
+        if (project.type === 'special') {
+            card.style.aspectRatio = "1 / 1";
+            card.style.backgroundColor = project.bgColor;
+            card.className += " flex flex-col justify-center items-center p-8 text-white text-center";
+            card.innerHTML = `<h2 class="font-bold text-2xl mb-2 uppercase font-[gothambold]">${project.title}</h2><p class="text-sm opacity-80">Clicca per info</p>`;
+            card.onclick = () => aprireModal(project.title, project.content);
+        } 
         
-        // Se NON è "original", assegniamo una proporzione random dall'elenco
-        if (!project.original) {
-            const ratioCasuale = proportions[Math.floor(Math.random() * proportions.length)];
-            card.style.aspectRatio = ratioCasuale;
+        // LOGICA PROGETTO NORMALE
+        else {
+            if (!project.original) {
+                card.style.aspectRatio = proportions[i % proportions.length];
+            }
+
+            let media;
+            const isVideo = project.url.toLowerCase().endsWith('.mp4');
+            if (isVideo) {
+                media = document.createElement('video');
+                media.src = project.url;
+                media.autoplay = media.loop = media.muted = true;
+                media.setAttribute('playsinline', ''); 
+            } else {
+                media = document.createElement('img');
+                media.src = project.url;
+            }
+
+            media.className = project.original ? "w-full h-auto block" : "w-full h-full object-cover block";
+            media.classList.add("transition-transform", "duration-700", "group-hover:scale-110");
+
+            const overlay = document.createElement('div');
+            overlay.className = "absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center p-6 text-center";
+            overlay.innerHTML = `<h3 class="text-white font-bold text-lg uppercase tracking-widest translate-y-4 group-hover:translate-y-0 transition-transform duration-500 font-[gothambold]">${project.title}</h3>`;
+
+            card.appendChild(media);
+            card.appendChild(overlay);
+            
+            // Cliccando su un progetto vai al link
+            card.onclick = () => window.location.href = project.link;
         }
 
-        card.className = "group relative block w-full overflow-hidden rounded-2xl transition-transform duration-500 hover:scale-105 z-10 bg-[#1a1a1a] shadow-xl";
-
-        // Creiamo il Media (Video o Immagine)
-        let media;
-        if (isVideo) {
-            media = document.createElement('video');
-            media.src = project.url;
-            media.autoplay = true;
-            media.loop = true;
-            media.muted = true;
-            media.setAttribute('playsinline', ''); 
-        } else {
-            media = document.createElement('img');
-            media.src = project.url;
-        }
-        
-        // Applichiamo le classi per lo stile (originale vs riempimento)
-        if (project.original) {
-            media.className = "w-full h-auto block transition-transform duration-700 group-hover:scale-110";
-        } else {
-            media.className = "w-full h-full object-cover block transition-transform duration-700 group-hover:scale-110";
-        }
-
-        // Overlay testo
-        const overlay = document.createElement('div');
-        overlay.className = "absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center p-6 text-center";
-        overlay.innerHTML = `<h3 class="text-white font-bold text-lg uppercase tracking-widest translate-y-4 group-hover:translate-y-0 transition-transform duration-500 font-[gothambold]">${project.title}</h3>`;
-
-        card.appendChild(media);
-        card.appendChild(overlay);
-
-        // Mettiamo la card nella colonna giusta usando il resto della divisione %
-        const colonnaTarget = columnsContainer.children[i % count];
-        colonnaTarget.appendChild(card);
+        const targetCol = columnsContainer.children[i % count];
+        targetCol.appendChild(card);
     });
 
-    // Impostiamo la griglia CSS del contenitore
     columnsContainer.className = `grid grid-cols-${count} gap-4 px-4 md:px-10`;
     loading.style.display = 'none';
 };
 
-// Avviamo tutto
+// 4. AVVIO E RESIZE
 setup();
 
-// Gestione ridimensionamento finestra
-let timeout;
+let timer;
 window.addEventListener('resize', () => {
     loading.style.display = 'block';
-    clearTimeout(timeout);
-    timeout = setTimeout(() => setup(), 300);
+    clearTimeout(timer);
+    timer = setTimeout(setup, 300);
 });
-        </script> 
-
-
-
-
-    <script> 
-        // Gestione Menu Mobile
-        const menuBtn = document.getElementById("menuBtn");
-        const menu = document.getElementById("toggleMenu");
-        const nav = document.getElementById("navbar");
-        const animDuration = 0.2; 
-        
-        menuBtn.addEventListener("click", (e) => {
-            e.preventDefault();
-            menu.classList.toggle("active");
-            
-        });
-
     </script>
 </body>
 </html>
