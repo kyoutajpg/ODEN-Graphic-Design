@@ -11,7 +11,7 @@ html, body {
     scroll-behavior: smooth;
     margin: 0;
     box-sizing: border-box;
-    font-family: mon, sans-serif;
+    font-family: monmed, sans-serif;
 }
 
 a { 
@@ -283,7 +283,7 @@ textarea::placeholder {
         width: 90%;  
         overflow: hidden;
         padding-top: 0; 
-        padding-bottom: 25px;
+        padding-bottom: 0px;
     }
 
     .menu {
@@ -310,4 +310,5 @@ textarea::placeholder {
     .service-card { 
         height: 80vw; 
     } 
+    
 }
