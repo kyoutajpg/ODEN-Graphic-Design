@@ -21,11 +21,6 @@
             </ul>
         </nav>
     </header>
-    
-    <!-- LOADING 
-    <div id="loading" class="h-screen w-screen fixed bg-white z-20 flex justify-center items-center">
-        <img src="Links/Risorsa 11.svg" style="width: 32px;" alt="Loading">
-    </div>-->
 
     <!-- PORTFOLIO GRID -->
     <div class="bg-black md:pt-[115px] pt-[145px] pb-[60px]">
@@ -33,6 +28,11 @@
             <div id="columns"></div>
         </div>
     </div>
+
+      <!-- LOADING 
+    <div id="loading" class="h-screen w-screen fixed bg-white z-50 flex justify-center items-center">
+        <img src="Links/Risorsa 11.svg" style="width: 32px;" alt="Loading">
+    </div>-->
 
     <!-- FOOTER -->
     <footer class="bg-[#140030]">
@@ -118,7 +118,7 @@
                 original: true,
                 html: `
                 <div class="flex justify-center items-center">
-                    <video class="rounded-xl max-w-md" autoplay loop muted>
+                    <video class="rounded-xl max-w-md w-full" autoplay loop muted>
                         <source src="Links/Gayle render.mp4" type="video/mp4">
                     </video>
                 </div>
@@ -235,7 +235,7 @@
                 original: true,
                 html: `
                 <div class="flex justify-center items-center">
-                    <video class="rounded-xl max-w-2xl" autoplay loop muted>
+                    <video class="rounded-xl max-w-2xl w-full" autoplay loop muted>
                         <source src="Links/Progetto Pesce V1.mp4" type="video/mp4">
                     </video>
                 </div>
@@ -247,7 +247,7 @@
                 original: true,
                 html: `
                 <div class="flex justify-center items-center">
-                    <video class="rounded-xl max-w-2xl" autoplay loop muted>
+                    <video class="rounded-xl w-full" autoplay loop muted>
                         <source src="Links/Esercizio 3D.mp4" type="video/mp4">
                     </video>
                 </div>
@@ -368,7 +368,7 @@
             });
 
             columnsContainer.className = `grid grid-cols-${count} gap-4 px-4 md:px-10`;
-            loading.style.display = 'none';
+            //loading.style.display = 'none';
         };
 
         setup();
