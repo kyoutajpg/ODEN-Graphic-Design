@@ -353,11 +353,11 @@
                 }
 
                 media.className = project.original ? "w-full h-auto block" : "w-full h-full object-cover block";
-                media.classList.add("transition-transform", "duration-700", "group-hover:scale-110");
+                media.classList.add("transition-transform", "duration-700", "hover:scale-110");
 
                 const overlay = document.createElement('div');
-                overlay.className = "absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center p-6 text-center";
-                overlay.innerHTML = `<h3 class="text-white font-bold text-lg uppercase tracking-widest translate-y-4 group-hover:translate-y-0 transition-transform duration-500" style="font-family:'kitora'">${project.title}</h3>`;
+                overlay.className = "absolute inset-0 bg-black/60 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-center p-6 text-center";
+                overlay.innerHTML = `<h3 class="text-white font-bold text-lg uppercase tracking-widest translate-y-4 hover:translate-y-0 transition-transform duration-500" style="font-family:'kitora'">${project.title}</h3>`;
 
                 card.appendChild(media);
                 card.appendChild(overlay);
